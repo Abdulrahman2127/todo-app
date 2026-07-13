@@ -1,38 +1,41 @@
 .App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #191b1f;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* ===== CUSTOM FONST ===== */
+@font-face {
+  font-family: A;
+  src: url("/public/Fonts/Frijole-Regular.ttf");
+  font-weight: 200px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+
+@font-face {
+  font-family: B;
+  src: url("/public/Fonts/Coiny-Regular.ttf");
+  font-weight: 200px;
+}
+/* =====// CUSTOM FONST //===== */
+
+.Cards{
+  transition: all 0.2s !important;
+}
+.Cards:hover{
+  background-color: #242f88;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+
+.iconButton {
+  transition: all 0.3s !important;
+}
+.iconButton:hover{
+  background-color: rgb(196, 196, 196) !important;
 }
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+
