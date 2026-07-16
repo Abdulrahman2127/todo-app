@@ -25,9 +25,10 @@ import { v4 as uuidv4 } from 'uuid'
 
 //USECONTEXT && USESTATE && USEEFFECT
 
-import { useContext, useState, useEffect , useMemo } from 'react'
+import { useContext, useState, useEffect , useMemo ,useReducer } from 'react'
 import { TodosContext } from '../context/todosContext'
 
+import TodosReducers from '../reducers/todosReducers'
 //DIALOG
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -36,10 +37,12 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 
+
 export default function TodoList() {
+  const [todos , dispatch] = useReducer(TodosReducers , [])
   const [showDeleteDialog ,setShowDeleteDialog ] = useState(false);
   const [showUpdateDialog ,setShowUpdateDialog ] = useState(false);
-  const { todos, setTodos } = useContext(TodosContext)
+  const { todos2, setTodos } = useContext(TodosContext)
   const [titleInput, setTitleInput] = useState('')
   const [displaylayedTodosType, setDisplaylayedTodosType] = useState('all')
   const [dialogTodo , setDalogTodo] = useState(null);
@@ -58,7 +61,7 @@ export default function TodoList() {
     console.log("calling not completed todos");
     return !t.isCompleted
   })
-  } ,[todos]);
+  } ,[todos]);  
  
   let todosToBeRender = todos
   
@@ -76,23 +79,12 @@ export default function TodoList() {
     setDisplaylayedTodosType(event.target.value)
   }
   function handleAddClick() {
-    const newTodo = {
-      id: uuidv4(),
-      title: titleInput,
-      details: '',
-      isCompleted: false,
-    }
-
-    const updatedTodos = [...todos, newTodo]
-    setTodos(updatedTodos)
-    localStorage.setItem('todos', JSON.stringify(updatedTodos))
+    dispatch({type: "added" , payload: {newTitle : titleInput}});
     setTitleInput('')
   }
 
   useEffect(() => {
-    console.log('Calling use effect')
-    const storageTodos = JSON.parse(localStorage.getItem('todos')) ?? [];
-    setTodos(storageTodos)
+    dispatch({type: "get" });
   }, []) 
 
   // HANDLERS 
@@ -106,20 +98,17 @@ export default function TodoList() {
   }
 
   function handleDeleteConfirm() {
-  const updatedTodos = todos.filter((t) => t.id !== dialogTodo.id);
-
-  setTodos(updatedTodos);
-  localStorage.setItem("todos", JSON.stringify(updatedTodos));
-
-  setShowDeleteDialog(false);
+    dispatch({type: "deleted" , payload: dialogTodo});
+    setShowDeleteDialog(false);
 }
   function handleUpdateClick(todo) {
   setDalogTodo(todo);
 
   setUpdatedTodo({
-    title: todo.title,
-    details: todo.details,
-  });
+  id: todo.id,
+  title: todo.title,
+  details: todo.details,
+});
 
   setShowUpdateDialog(true);
 }
@@ -129,30 +118,22 @@ export default function TodoList() {
   }
   
 function handleUpdateConfirm() {
-  const updatedTodos = todos.map((t) => {
-    if (t.id === dialogTodo.id) {
-      return {
-        ...t,
-        title: updatedTodo.title,
-        details: updatedTodo.details,
-      };
-    }
-
-    return t;
-  });
-
-  setTodos(updatedTodos);
-  localStorage.setItem("todos", JSON.stringify(updatedTodos));
-
-  setShowUpdateDialog(false);
-  setDalogTodo(null);
+    dispatch({type: "updated" , payload: updatedTodo});
+    setShowUpdateDialog(false);
+    setDalogTodo(null);
 }
 
 
 
 const todosJSX = todosToBeRender.map((t) => {
     
-    return <Todo key={t.id} todo={t} showDelete={handleDeleteClick} showUpdate={handleUpdateClick} />
+    return <Todo
+  key={t.id}
+  todo={t}
+  dispatch={dispatch}
+  showDelete={handleDeleteClick}
+  showUpdate={handleUpdateClick}
+/>
   })
 
   return (

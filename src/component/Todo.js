@@ -21,27 +21,17 @@ import { useContext , useState } from 'react';
 import { TodosContext } from '../context/todosContext';
 
 
-export default function Todo({todo , showDelete , showUpdate}) {
+export default function Todo({todo , showDelete , showUpdate , dispatch}) {
   
-  
-  
-
   const {todos , setTodos} = useContext(TodosContext);
 
-
   //  EVENT HANDLERS
-  function hanldCheckClick(todoId){
-
-    const updatedTodos = todos.map((t) => {
-      if(t.id == todo.id){
-        t.isCompleted = !t.isCompleted;
-      }
-      return t;
-    })
-    setTodos(updatedTodos)
-    localStorage.setItem("todos",JSON.stringify(updatedTodos));
-
-  }
+  function hanldCheckClick() {
+  dispatch({
+    type: "toggled",
+    payload: todo.id,
+  });
+}
   function handleDeleteClick(){
     showDelete(todo)
   }
@@ -49,15 +39,10 @@ export default function Todo({todo , showDelete , showUpdate}) {
   function handleUpdateClick(){
     showUpdate(todo)
   }
-  
-
-
 
   // ===== EVENT HANDLERS =====
   return (
     <>
-    
-
 
     <Card  style={{marginBottom: "10px"}}  className='Cards' sx={{ minWidth: 275, background: '#283593', color: 'white' }}>
       <CardContent >
